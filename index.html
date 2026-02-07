@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>MD5 NEURAL HYBRID – AI PRO (ALL-IN-ONE)</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.2.0/crypto-js.min.js"></script>
+  <style>
+    :root{
+      --bg:#0b0e14; --card:#151921; --border:#2d333b; --accent:#00d2ff;
+      --tai:#ff4d4d; --xiu:#38b6ff; --gold:#ffc107; --text:#adbac7;
+    }
+    body{margin:0; background:var(--bg); color:var(--text); font-family:system-ui,-apple-system,Segoe UI,Roboto; display:flex; justify-content:center; padding:14px;}
+    .app{width:100%; max-width:920px; background:var(--card); border:1px solid var(--border); border-radius:14px; padding:16px; box-shadow:0 10px 40px rgba(0,0,0,.5)}
+    h1{margin:0; color:var(--gold); letter-spacing:1px; font-size:20px}
+    .sub{font-size:11px; color:#7d8590}
+    .row{display:flex; gap:8px; margin:10px 0}
+    input{flex:1; background:#0d1117; border:1px solid var(--border); color:var(--accent); padding:12px; border-radius:8px; font-family:monospace}
+    button{background:var(--accent); color:#001; border:0; border-radius:8px; padding:0 14px; font-weight:700; cursor:pointer}
+    .grid{display:grid; grid-template-columns:1fr 1fr; gap:10px}
+    .card{background:#0d1117; border:1px solid var(--border); border-radius:10px; padding:12px}
+    .full{grid-column:1/-1}
+    .res{font-size:56px; font-weight:900; text-align:center}
+    .bar{height:10px; background:#222; border-radius:6px; overflow:hidden; display:flex}
+    .fill{height:100%}
+    .meta{display:flex; justify-content:space-between; font-size:12px}
+    .conf{margin-top:6px; text-align:center; font-size:12px}
+    .terminal{background:#000; color:#00ff88; font-family:monospace; font-size:11px; height:120px; overflow:auto; padding:10px; border-radius:8px}
+    .hist{display:flex; gap:6px; flex-wrap:wrap; justify-content:center; margin-top:8px}
+    .dot{width:26px; height:26px; border-radius:6px; display:flex; align-items:center; justify-content:center; color:#fff; font-weight:800; font-size:12px}
+    .stats{font-size:12px; text-align:center; margin-top:8px}
+    .warn{font-size:11px; text-align:center; margin-top:4px; color:#ff4d4d}
+    .btns{display:flex; gap:8px; justify-content:center; margin-top:8px}
+    .ok{color:#00ff99} .bad{color:#ff4d4d}
+  </style>
+</head>
+<body>
+  <div class="app">
+    <h1>MD5 NEURAL HYBRID – AI PRO (ALL-IN-ONE)</h1>
+    <div class="sub">Dự đoán AI + Confidence + SAFE MODE + Tự học + Kiểm tra minh bạch MD5</div>
+
+    <!-- AI PREDICT -->
+    <div class="row">
+      <input id="md5Input" placeholder="Dán MD5 32 ký tự..." maxlength="32"/>
+      <button onclick="startAnalysis()">PHÂN TÍCH</button>
+    </div>
+
+    <div class="grid">
+      <div class="card">
+        <div class="sub" style="text-align:center">DỰ ĐOÁN</div>
+        <div id="mainResult" class="res">---</div>
+        <div class="bar">
+          <div id="barTai" class="fill" style="background:var(--tai); width:50%"></div>
+          <div id="barXiu" class="fill" style="background:var(--xiu); width:50%"></div>
+        </div>
+        <div class="meta">
+          <span id="lbTai" style="color:var(--tai)">TÀI: 50%</span>
+          <span id="lbXiu" style="color:var(--xiu)">XỈU: 50%</span>
+        </div>
+        <div class="conf">
+          Độ tin cậy: <b id="confScore" style="color:#00ffcc">0%</b> • 
+          Khuyến nghị: <b id="safeMode" style="color:#ffc107">---</b>
+        </div>
+        <div id="riskWarn" class="warn"></div>
+      </div>
+
+      <div class="card">
+        <div class="sub" style="margin-bottom:6px">TRẠNG THÁI ENGINE</div>
+        <div>Markov: <b id="stMarkov">--</b></div>
+        <div>Xu hướng: <b id="stTrend">--</b></div>
+        <div>Tần suất: <b id="stFreq">--</b></div>
+        <div>Chuỗi: <b id="stChain">--</b></div>
+        <div>MD5 Vector: <b id="stMd5">--</b></div>
+      </div>
+
+      <div class="card full terminal" id="logBox">> Ready.</div>
+    </div>
+
+    <div class="btns">
+      <button onclick="feedResult('TÀI')">Nhập KQ: TÀI</button>
+      <button onclick="feedResult('XỈU')">Nhập KQ: XỈU</button>
+      <button onclick="clearAll()" style="background:#333;color:#aaa">Reset AI</button>
+    </div>
+
+    <div class="stats" id="vipStats">Tổng: 0 | Win: 0 | Lose: 0 | Winrate: 0%</div>
+    <div class="hist" id="hist"></div>
+
+    <!-- MD5 VERIFY -->
+    <div class="card full" style="margin-top:12px">
+      <div class="sub" style="margin-bottom:6px">🔎 KIỂM TRA MINH BẠCH MD5</div>
+      <div class="row">
+        <input id="md5Provided" placeholder="MD5 nhà cái công bố trước ván"/>
+      </div>
+      <div class="row">
+        <input id="resultString" placeholder="Chuỗi kết quả sau ván (để hash MD5)"/>
+        <button onclick="checkMD5()">KIỂM TRA</button>
+      </div>
+
+      <div style="font-size:12px; margin-top:6px">
+        MD5 tính toán: <b id="md5Calc" style="color:#00ffcc">---</b>
+      </div>
+      <div id="md5Status" style="font-size:12px; margin-top:4px;"></div>
+
+      <div class="terminal" id="md5Log" style="margin-top:8px; height:120px"></div>
+    </div>
+  </div>
+
+<script>
+let history = JSON.parse(localStorage.getItem("hist")) || [];
+let stats = JSON.parse(localStorage.getItem("stats")) || {total:0, win:0, lose:0};
+let weights = JSON.parse(localStorage.getItem("weights")) || {markov:1, trend:1, freq:1, chain:1, md5:1};
+let loseStreak = Number(localStorage.getItem("loseStreak") || 0);
+let lastPredict = null;
+let lastMd5 = localStorage.getItem("lastMd5") || null;
+
+function save(){
+  localStorage.setItem("hist", JSON.stringify(history));
+  localStorage.setItem("stats", JSON.stringify(stats));
+  localStorage.setItem("weights", JSON.stringify(weights));
+  localStorage.setItem("loseStreak", loseStreak);
+  if(lastMd5) localStorage.setItem("lastMd5", lastMd5);
+}
+function addLog(m){ const b=document.getElementById("logBox"); b.innerHTML += "<div>"+m+"</div>"; b.scrollTop=b.scrollHeight; }
+function renderHist(){
+  hist.innerHTML = history.slice(-24).reverse().map(h=>`<div class="dot" style="background:${h==='TÀI'?'var(--tai)':'var(--xiu)'}">${h==='TÀI'?'T':'X'}</div>`).join("");
+}
+function renderStats(){
+  const wr = stats.total? ((stats.win/stats.total)*100).toFixed(1):0;
+  vipStats.innerText = `Tổng: ${stats.total} | Win: ${stats.win} | Lose: ${stats.lose} | Winrate: ${wr}%`;
+}
+function phuongPhapChuoi(d){ if(!d.length) return "TÀI"; let last=d[d.length-1], c=1; for(let i=d.length-2;i>=0;i--){ if(d[i]===last)c++; else break; } return c>=4 ? (last? "XỈU":"TÀI") : (last? "TÀI":"XỈU"); }
+function phuongPhapXuHuong(d){ if(d.length<5) return "TÀI"; let s=0; for(let i=1;i<d.length;i++) d[i]===d[i-1]? s++:s--; return s>0? (d[d.length-1]? "TÀI":"XỈU"):(d[d.length-1]? "XỈU":"TÀI"); }
+function phuongPhapTanSuat(d){ let t=d.filter(x=>x===1).length; return t>d.length/2? "TÀI":"XỈU"; }
+function phuongPhapMarkov(d){ if(d.length<5) return "TÀI"; let m=[[0,0],[0,0]]; for(let i=1;i<d.length;i++) m[d[i-1]][d[i]]++; let cur=d[d.length-1]; return m[cur][1]>m[cur][0]? "TÀI":"XỈU"; }
+function md5Vector(md5){
+  let ascii=0, vec=0;
+  for(let i=0;i<32;i++){ ascii+=md5.charCodeAt(i)*(i+1); vec+=parseInt(md5[i],16)*(32-i); }
+  return ((ascii+vec)%1000)>500? "TÀI":"XỈU";
+}
+
+function startAnalysis(){
+  const md5 = md5Input.value.trim().toLowerCase();
+  if(!/^[a-f0-9]{32}$/.test(md5)) return alert("MD5 không hợp lệ!");
+  if(md5===lastMd5) return addLog("> ❌ Trùng phiên, bỏ qua.");
+
+  lastMd5 = md5;
+  addLog("> Quét MD5: "+md5);
+
+  const data = history.map(x=> x==="TÀI"?1:0);
+  const pChain = phuongPhapChuoi(data);
+  const pTrend = phuongPhapXuHuong(data);
+  const pFreq  = phuongPhapTanSuat(data);
+  const pMark  = phuongPhapMarkov(data);
+  const pMd5   = md5Vector(md5);
+
+  stChain.innerText=pChain; stTrend.innerText=pTrend; stFreq.innerText=pFreq; stMarkov.innerText=pMark; stMd5.innerText=pMd5;
+
+  let tai=0, xiu=0;
+  [["chain",pChain],["trend",pTrend],["freq",pFreq],["markov",pMark],["md5",pMd5]].forEach(([k,v])=>{
+    if(v==="TÀI") tai+=weights[k]; else xiu+=weights[k];
+  });
+
+  const total=tai+xiu;
+  const final = tai>xiu? "TÀI":"XỈU";
+  const conf = total? Math.round((Math.max(tai,xiu)/total)*100):50;
+
+  lastPredict = final;
+
+  mainResult.innerText=final;
+  mainResult.style.color = final==="TÀI"?"var(--tai)":"var(--xiu)";
+  barTai.style.width = conf+"%";
+  barXiu.style.width = (100-conf)+"%";
+  lbTai.innerText = "TÀI: "+conf+"%";
+  lbXiu.innerText = "XỈU: "+(100-conf)+"%";
+  confScore.innerText = conf+"%";
+  safeMode.innerText = conf>=70? "THEO":"KHÔNG THEO";
+  safeMode.style.color = conf>=70? "#00ff99":"#ff4d4d";
+  riskWarn.innerText = loseStreak>=2? "⚠️ AI đang thua liên tiếp – cân nhắc giảm cược":"";
+
+  addLog(`> AI PRO: ${final} (${conf}%)`);
+  save();
+}
+
+function feedResult(real){
+  if(!lastPredict) return alert("Chưa có dự đoán!");
+  stats.total++;
+  if(real===lastPredict){ stats.win++; loseStreak=0; }
+  else { stats.lose++; loseStreak++; }
+
+  const data = history.map(x=> x==="TÀI"?1:0);
+  const pChain = phuongPhapChuoi(data);
+  const pTrend = phuongPhapXuHuong(data);
+  const pFreq  = phuongPhapTanSuat(data);
+  const pMark  = phuongPhapMarkov(data);
+  const pMd5   = md5Vector(lastMd5);
+
+  [["chain",pChain],["trend",pTrend],["freq",pFreq],["markov",pMark],["md5",pMd5]].forEach(([k,v])=>{
+    if(v===real) weights[k]+=0.1; else weights[k]=Math.max(0.5, weights[k]-0.1);
+  });
+
+  history.push(real); if(history.length>60) history.shift();
+  addLog(`> Kết quả thực: ${real} → ${real===lastPredict?"WIN":"LOSE"}`);
+  renderHist(); renderStats(); save();
+}
+
+function checkMD5(){
+  const provided = md5Provided.value.trim().toLowerCase();
+  const resultStr = resultString.value;
+
+  if(!provided || !resultStr) return alert("Nhập đủ MD5 và chuỗi kết quả!");
+
+  const calc = CryptoJS.MD5(resultStr).toString();
+  md5Calc.innerText = calc;
+
+  const ok = calc === provided;
+  md5Status.innerHTML = ok
+    ? `<span class="ok">✅ KẾT QUẢ KHỚP – Minh bạch</span>`
+    : `<span class="bad">❌ SAI LỆCH – Có thể nhập sai chuỗi hoặc dữ liệu không khớp</span>`;
+
+  md5Log.innerHTML += `> MD5 nhà cái: ${provided}<br>> MD5 tính được: ${calc}<br>> Trạng thái: ${ok?"KHỚP":"SAI"}<br><br>`;
+  md5Log.scrollTop = md5Log.scrollHeight;
+}
+
+function clearAll(){
+  if(!confirm("Reset toàn bộ dữ liệu AI?")) return;
+  history=[]; stats={total:0,win:0,lose:0}; weights={markov:1,trend:1,freq:1,chain:1,md5:1};
+  loseStreak=0; lastPredict=null; lastMd5=null; localStorage.clear();
+  renderHist(); renderStats(); addLog("> Reset xong.");
+}
+
+renderHist(); renderStats();
+</script>
+</body>
+</html>
