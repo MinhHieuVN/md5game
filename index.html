@@ -1,156 +1,316 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="vi">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>TX VIP PRO – LC79</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>MD5 NEURAL HYBRID – VIP MAX</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.2.0/crypto-js.min.js"></script>
   <style>
     :root{
-      --bg:#0b1220; --card:#0f172a; --neon:#22d3ee; --ok:#22c55e; --bad:#ef4444; --muted:#94a3b8;
+      --bg:#0b0e14; --card:#151921; --border:#2d333b; --accent:#00d2ff;
+      --tai:#ff4d4d; --xiu:#38b6ff; --gold:#ffc107; --text:#adbac7;
     }
-    *{box-sizing:border-box;font-family:system-ui,-apple-system,Segoe UI,Roboto}
-    body{margin:0;min-height:100vh;background:radial-gradient(1200px 600px at 10% -10%,#0b2a3a,transparent),var(--bg);color:#e5e7eb;display:grid;place-items:center}
-    .wrap{width:min(420px,92vw)}
-    .card{background:linear-gradient(180deg,#0b1328,#0a1020);border:1px solid #0b2440;border-radius:18px;box-shadow:0 0 0 1px #0b2440 inset,0 20px 60px rgba(0,0,0,.5);padding:16px}
-    .title{display:flex;align-items:center;gap:10px;margin-bottom:10px}
-    .dot{width:8px;height:8px;border-radius:50%;background:var(--neon);box-shadow:0 0 12px var(--neon)}
-    .grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-    .box{background:#0b1328;border:1px solid #0b2440;border-radius:14px;padding:10px}
-    .big{font-size:28px;font-weight:800;letter-spacing:.5px}
-    .tx{font-size:36px;font-weight:900}
-    .tai{color:var(--ok)} .xiu{color:var(--bad)}
-    .muted{color:var(--muted)}
-    .bar{height:8px;border-radius:999px;background:#0b2440;overflow:hidden}
-    .fill{height:100%;background:linear-gradient(90deg,#22d3ee,#60a5fa);width:0%}
-    .row{display:flex;justify-content:space-between;gap:8px}
-    .pill{padding:6px 10px;border-radius:999px;border:1px solid #0b2440;background:#0b1328}
-    .btns{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
-    .btn{border-radius:12px;border:1px solid #0b2440;background:#0b1328;color:#e5e7eb;padding:10px;font-weight:700}
-    .btn.ok{outline:2px solid rgba(34,197,94,.2)}
-    .btn.no{outline:2px solid rgba(239,68,68,.2)}
-    .foot{margin-top:10px;display:flex;justify-content:space-between;align-items:center}
-    .spin{width:14px;height:14px;border:2px solid #0b2440;border-top-color:var(--neon);border-radius:50%;animation:spin 1s linear infinite}
-    @keyframes spin{to{transform:rotate(360deg)}}
+    body{margin:0; background:var(--bg); color:var(--text); font-family:system-ui,-apple-system,Segoe UI,Roboto; display:flex; justify-content:center; padding:14px;}
+    .app{width:100%; max-width:1024px; background:var(--card); border:1px solid var(--border); border-radius:14px; padding:16px; box-shadow:0 10px 40px rgba(0,0,0,.5)}
+    h1{margin:0; color:var(--gold); letter-spacing:1px; font-size:20px}
+    .sub{font-size:11px; color:#7d8590}
+    .row{display:flex; gap:8px; margin:10px 0}
+    input{flex:1; background:#0d1117; border:1px solid var(--border); color:var(--accent); padding:12px; border-radius:8px; font-family:monospace}
+    button{background:var(--accent); color:#001; border:0; border-radius:8px; padding:0 14px; font-weight:800; cursor:pointer}
+    .grid{display:grid; grid-template-columns:1fr 1fr; gap:10px}
+    .card{background:#0d1117; border:1px solid var(--border); border-radius:10px; padding:12px}
+    .full{grid-column:1/-1}
+    .res{font-size:56px; font-weight:900; text-align:center}
+    .bar{height:10px; background:#222; border-radius:6px; overflow:hidden; display:flex}
+    .fill{height:100%}
+    .meta{display:flex; justify-content:space-between; font-size:12px}
+    .conf{margin-top:6px; text-align:center; font-size:12px}
+    .terminal{background:#000; color:#00ff88; font-family:monospace; font-size:11px; height:110px; overflow:auto; padding:10px; border-radius:8px}
+    .hist{display:flex; gap:6px; flex-wrap:wrap; justify-content:center; margin-top:8px}
+    .dot{width:26px; height:26px; border-radius:6px; display:flex; align-items:center; justify-content:center; color:#fff; font-weight:800; font-size:12px}
+    .stats{font-size:12px; text-align:center; margin-top:8px}
+    .warn{font-size:11px; text-align:center; margin-top:4px; color:#ff4d4d}
+    table{width:100%; font-size:12px; border-collapse:collapse}
+    th,td{border-bottom:1px solid #222; padding:6px}
+    th{text-align:left; color:#9fb3c8}
+    .ok{color:#00ff99} .bad{color:#ff4d4d}
+
+    /* PICK BUTTONS */
+    .pick-wrap{display:flex; gap:12px; justify-content:center; margin:12px 0}
+    .pick{
+      flex:1; max-width:160px; padding:14px 0; border-radius:999px; border:0;
+      font-weight:900; font-size:16px; letter-spacing:1px; color:#fff; cursor:pointer;
+      transition:.15s ease;
+    }
+    .pick.tai{ background: linear-gradient(135deg, #ff4d4d, #ff7a7a); }
+    .pick.xiu{ background: linear-gradient(135deg, #38b6ff, #7ad3ff); }
+    .pick:active{ transform: scale(.97); }
+    .pick:hover{ filter: brightness(1.1); }
+
+    /* PULSE */
+    @keyframes pulse {
+      0%   { transform: scale(1); box-shadow: 0 0 0 0 rgba(255,77,77,.7); }
+      70%  { transform: scale(1.06); box-shadow: 0 0 0 14px rgba(255,77,77,0); }
+      100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255,77,77,0); }
+    }
+    .pick.pulse-tai{ animation: pulse 1.5s infinite; }
+    @keyframes pulseX {
+      0%   { transform: scale(1); box-shadow: 0 0 0 0 rgba(56,182,255,.7); }
+      70%  { transform: scale(1.06); box-shadow: 0 0 0 14px rgba(56,182,255,0); }
+      100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(56,182,255,0); }
+    }
+    .pick.pulse-xiu{ animation: pulseX 1.5s infinite; }
   </style>
 </head>
 <body>
-  <div class="wrap">
-    <div class="card">
-      <div class="title">
-        <div class="dot"></div>
-        <strong>TX VIP PRO – LC79</strong>
-        <span class="muted" id="apiState">• checking…</span>
+  <div class="app">
+    <h1>MD5 NEURAL HYBRID – VIP MAX</h1>
+    <div class="sub">AI PRO + MD5 VIP + SAFE MODE + Pulse Buttons + Verify MD5</div>
+
+    <div class="row">
+      <input id="md5Input" placeholder="Dán MD5 32 ký tự..." maxlength="32"/>
+      <button onclick="startAnalysis()">PHÂN TÍCH</button>
+    </div>
+
+    <div class="grid">
+      <div class="card">
+        <div class="sub" style="text-align:center">DỰ ĐOÁN</div>
+        <div id="mainResult" class="res">---</div>
+        <div class="bar">
+          <div id="barTai" class="fill" style="background:var(--tai); width:50%"></div>
+          <div id="barXiu" class="fill" style="background:var(--xiu); width:50%"></div>
+        </div>
+        <div class="meta">
+          <span id="lbTai" style="color:var(--tai)">TÀI: 50%</span>
+          <span id="lbXiu" style="color:var(--xiu)">XỈU: 50%</span>
+        </div>
+        <div class="conf">
+          Độ tin cậy: <b id="confScore" style="color:#00ffcc">0%</b> • 
+          Khuyến nghị: <b id="safeMode" style="color:#ffc107">---</b>
+        </div>
+        <div id="riskWarn" class="warn"></div>
       </div>
 
-      <div class="grid">
-        <div class="box">
-          <div class="muted">Phiên</div>
-          <div class="big" id="phien">—</div>
-        </div>
-        <div class="box">
-          <div class="muted">Xúc xắc</div>
-          <div class="big" id="dice">—</div>
-        </div>
-        <div class="box">
-          <div class="muted">Tổng</div>
-          <div class="big" id="sum">—</div>
-        </div>
-        <div class="box">
-          <div class="muted">Kết quả</div>
-          <div class="tx" id="tx">—</div>
-        </div>
+      <div class="card">
+        <div class="sub" style="margin-bottom:6px">TRẠNG THÁI ENGINE</div>
+        <div>Markov: <b id="stMarkov">--</b></div>
+        <div>Xu hướng: <b id="stTrend">--</b></div>
+        <div>Tần suất: <b id="stFreq">--</b></div>
+        <div>Chuỗi: <b id="stChain">--</b></div>
+        <div>MD5 VIP: <b id="stMd5">--</b></div>
       </div>
 
-      <div class="box" style="margin-top:10px">
-        <div class="row">
-          <strong>AI tổng hợp</strong>
-          <span class="pill" id="aiPick">—</span>
-        </div>
-        <div class="bar" style="margin:8px 0"><div class="fill" id="aiBar"></div></div>
-        <div class="row muted">
-          <span>Độ tin cậy</span>
-          <span id="aiPct">0%</span>
-        </div>
-      </div>
+      <div class="card full terminal" id="logBox">> Ready.</div>
 
-      <div class="btns">
-        <button class="btn ok" id="btnFollow">THEO</button>
-        <button class="btn no" id="btnNoFollow">KHÔNG THEO</button>
+      <div class="card full">
+        <div class="sub" style="margin-bottom:6px">🧬 MD5 VIP ANALYSIS</div>
+        <table>
+          <thead>
+            <tr><th>Khối</th><th>Hex</th><th align="right">Tổng</th><th align="right">Lực (%)</th><th align="center">Vote</th></tr>
+          </thead>
+          <tbody id="md5SegBody"></tbody>
+        </table>
+        <div style="margin-top:6px; font-size:12px">
+          Engines: <span id="md5VecRes">Vector: --</span> |
+          <span id="md5ParRes">Parity: --</span> |
+          <span id="md5EntRes">Entropy: --</span>
+        </div>
+        <div style="margin-top:4px; font-size:12px">
+          MD5 Tổng hợp: <b id="md5VipRes" style="color:#00ffcc">--</b> •
+          Độ tin cậy: <b id="md5VipConf" style="color:#ffc107">0%</b>
+        </div>
       </div>
+    </div>
 
-      <div class="foot">
-        <span class="muted" id="lastUpdate">—</span>
-        <div class="spin" id="loading"></div>
+    <div class="pick-wrap">
+      <button class="pick tai" id="btnTai" onclick="feedResult('TÀI')">TÀI</button>
+      <button class="pick xiu" id="btnXiu" onclick="feedResult('XỈU')">XỈU</button>
+    </div>
+
+    <div class="stats" id="vipStats">Tổng: 0 | Win: 0 | Lose: 0 | Winrate: 0%</div>
+    <div class="hist" id="hist"></div>
+
+    <div class="card full" style="margin-top:12px">
+      <div class="sub" style="margin-bottom:6px">🔎 KIỂM TRA MINH BẠCH MD5</div>
+      <div class="row">
+        <input id="md5Provided" placeholder="MD5 nhà cái công bố trước ván"/>
       </div>
+      <div class="row">
+        <input id="resultString" placeholder="Chuỗi kết quả sau ván (để hash MD5)"/>
+        <button onclick="checkMD5()">KIỂM TRA</button>
+      </div>
+      <div style="font-size:12px; margin-top:6px">
+        MD5 tính toán: <b id="md5Calc" style="color:#00ffcc">---</b>
+      </div>
+      <div id="md5Status" style="font-size:12px; margin-top:4px;"></div>
+      <div class="terminal" id="md5Log" style="margin-top:8px; height:120px"></div>
     </div>
   </div>
 
 <script>
-const API = "https://lc79-byck.onrender.com/lc79/md5";
-let history = [];
-let lastPhien = null;
+let history = JSON.parse(localStorage.getItem("hist")) || [];
+let stats = JSON.parse(localStorage.getItem("stats")) || {total:0, win:0, lose:0};
+let weights = JSON.parse(localStorage.getItem("weights")) || {markov:1, trend:1, freq:1, chain:1, md5:1};
+let loseStreak = Number(localStorage.getItem("loseStreak") || 0);
+let lastPredict = null;
+let lastMd5 = localStorage.getItem("lastMd5") || null;
 
-const $ = id => document.getElementById(id);
-const txOf = sum => sum >= 11 ? "TÀI" : "XỈU";
+function save(){
+  localStorage.setItem("hist", JSON.stringify(history));
+  localStorage.setItem("stats", JSON.stringify(stats));
+  localStorage.setItem("weights", JSON.stringify(weights));
+  localStorage.setItem("loseStreak", loseStreak);
+  if(lastMd5) localStorage.setItem("lastMd5", lastMd5);
+}
+function addLog(m){ const b=document.getElementById("logBox"); b.innerHTML += "<div>"+m+"</div>"; b.scrollTop=b.scrollHeight; }
+function renderHist(){
+  hist.innerHTML = history.slice(-24).reverse().map(h=>`<div class="dot" style="background:${h==='TÀI'?'var(--tai)':'var(--xiu)'}">${h==='TÀI'?'T':'X'}</div>`).join("");
+}
+function renderStats(){
+  const wr = stats.total? ((stats.win/stats.total)*100).toFixed(1):0;
+  vipStats.innerText = `Tổng: ${stats.total} | Win: ${stats.win} | Lose: ${stats.lose} | Winrate: ${wr}%`;
+}
+function phuongPhapChuoi(d){ if(!d.length) return "TÀI"; let last=d[d.length-1], c=1; for(let i=d.length-2;i>=0;i--){ if(d[i]===last)c++; else break; } return c>=4 ? (last? "XỈU":"TÀI") : (last? "TÀI":"XỈU"); }
+function phuongPhapXuHuong(d){ if(d.length<5) return "TÀI"; let s=0; for(let i=1;i<d.length;i++) d[i]===d[i-1]? s++:s--; return s>0? (d[d.length-1]? "TÀI":"XỈU"):(d[d.length-1]? "XỈU":"TÀI"); }
+function phuongPhapTanSuat(d){ let t=d.filter(x=>x===1).length; return t>d.length/2? "TÀI":"XỈU"; }
+function phuongPhapMarkov(d){ if(d.length<5) return "TÀI"; let m=[[0,0],[0,0]]; for(let i=1;i<d.length;i++) m[d[i-1]][d[i]]++; let cur=d[d.length-1]; return m[cur][1]>m[cur][0]? "TÀI":"XỈU"; }
 
-function engineBet(h){ if(h.length>=3 && h.at(-1)===h.at(-2) && h.at(-2)===h.at(-3)) return h.at(-1); }
-function engineFlip(h){ if(h.length>=1) return h.at(-1)==="TÀI"?"XỈU":"TÀI"; }
-function engineFreq(h){
-  const m = {}; h.slice(-10).forEach(x=>m[x]=(m[x]||0)+1);
-  let best=null, c=0; for(const k in m){ if(m[k]>c){c=m[k]; best=k;} } return best;
+function md5VipAnalysis(md5){
+  let segVotes=[], totalForce=0, tbody=md5SegBody; tbody.innerHTML="";
+  for(let i=0;i<4;i++){
+    const seg = md5.substr(i*8,8);
+    let sum=0; for(const c of seg) sum+=parseInt(c,16);
+    const force=Math.min(100, Math.round((sum/120)*100));
+    const vote = sum>60? "TÀI":"XỈU";
+    totalForce+=sum; segVotes.push(vote);
+    tbody.innerHTML+=`<tr><td>#${i+1}</td><td>${seg}</td><td align="right">${sum}</td><td align="right">${force}%</td><td align="center" style="color:${vote==='TÀI'?'var(--tai)':'var(--xiu)'}">${vote}</td></tr>`;
+  }
+  const vecRes = totalForce>240? "TÀI":"XỈU";
+  let even=0, odd=0; for(const c of md5) (parseInt(c,16)%2===0)? even++:odd++;
+  const parRes = even>odd? "TÀI":"XỈU";
+  const uniq = new Set(md5.split("")).size;
+  const entRes = uniq>12? "TÀI":"XỈU";
+
+  let votes=[vecRes, parRes, entRes, ...segVotes];
+  let tai=votes.filter(v=>v==="TÀI").length, xiu=votes.length-tai;
+  const final = tai>xiu? "TÀI":"XỈU";
+  const conf = Math.round((Math.max(tai,xiu)/votes.length)*100);
+
+  md5VecRes.innerText = "Vector: "+vecRes;
+  md5ParRes.innerText = "Parity: "+parRes;
+  md5EntRes.innerText = "Entropy: "+entRes;
+  md5VipRes.innerText = final; md5VipRes.style.color = final==="TÀI"?"var(--tai)":"var(--xiu)";
+  md5VipConf.innerText = conf+"%";
+  return {final, conf};
 }
 
-async function load(){
-  $("loading").style.display="inline-block";
-  try{
-    const res = await fetch(API, {cache:"no-store"});
-    const d = await res.json();
-    $("apiState").textContent = "• online";
-    $("apiState").style.color = "#22c55e";
-
-    const sum = d.xuc_xac_1 + d.xuc_xac_2 + d.xuc_xac_3;
-    const tx = txOf(sum);
-
-    if(d.phien !== lastPhien){
-      history.push(tx);
-      lastPhien = d.phien;
-    }
-
-    const e1 = engineBet(history);
-    const e2 = engineFlip(history);
-    const e3 = engineFreq(history);
-    const arr = [e1,e2,e3].filter(Boolean);
-    const cnt = arr.reduce((a,x)=>(a[x]=(a[x]||0)+1,a),{});
-    let pick = null, pct = 0;
-    if(arr.length){
-      pick = Object.entries(cnt).sort((a,b)=>b[1]-a[1])[0][0];
-      pct = Math.round((cnt[pick]/3)*100);
-    }
-
-    $("phien").textContent = d.phien ?? "—";
-    $("dice").textContent = `${d.xuc_xac_1}-${d.xuc_xac_2}-${d.xuc_xac_3}`;
-    $("sum").textContent = sum;
-    $("tx").textContent = tx;
-    $("tx").className = "tx " + (tx==="TÀI"?"tai":"xiu");
-
-    $("aiPick").textContent = pick ? pick : "—";
-    $("aiPct").textContent = pct + "%";
-    $("aiBar").style.width = pct + "%";
-
-    $("lastUpdate").textContent = "Cập nhật: " + new Date().toLocaleTimeString();
-  }catch(e){
-    $("apiState").textContent = "• offline";
-    $("apiState").style.color = "#ef4444";
-  }finally{
-    $("loading").style.display="none";
+function setPulse(final, safe){
+  btnTai.classList.remove("pulse-tai");
+  btnXiu.classList.remove("pulse-xiu");
+  if(safe==="THEO"){
+    if(final==="TÀI") btnTai.classList.add("pulse-tai");
+    else btnXiu.classList.add("pulse-xiu");
   }
 }
 
-$("btnFollow").onclick = ()=> alert("THEO khi AI ≥ 70% nhé!");
-$("btnNoFollow").onclick = ()=> alert("KHÔNG THEO khi AI < 70%");
+function startAnalysis(){
+  const md5 = md5Input.value.trim().toLowerCase();
+  if(!/^[a-f0-9]{32}$/.test(md5)) return alert("MD5 không hợp lệ!");
+  if(md5===lastMd5) return addLog("> ❌ Trùng phiên, bỏ qua.");
 
-load();
-setInterval(load, 3000);
+  lastMd5 = md5;
+  addLog("> Quét MD5: "+md5);
+
+  const data = history.map(x=> x==="TÀI"?1:0);
+  const pChain = phuongPhapChuoi(data);
+  const pTrend = phuongPhapXuHuong(data);
+  const pFreq  = phuongPhapTanSuat(data);
+  const pMark  = phuongPhapMarkov(data);
+
+  const vip = md5VipAnalysis(md5);
+  const pMd5 = vip.final;
+
+  stChain.innerText=pChain; stTrend.innerText=pTrend; stFreq.innerText=pFreq; stMarkov.innerText=pMark; stMd5.innerText=pMd5;
+
+  let tai=0, xiu=0;
+  [["chain",pChain],["trend",pTrend],["freq",pFreq],["markov",pMark],["md5",pMd5]].forEach(([k,v])=>{
+    if(v==="TÀI") tai+=weights[k]; else xiu+=weights[k];
+  });
+
+  const total=tai+xiu;
+  const final = tai>xiu? "TÀI":"XỈU";
+  const conf = total? Math.round((Math.max(tai,xiu)/total)*100):50;
+
+  lastPredict = final;
+
+  mainResult.innerText=final;
+  mainResult.style.color = final==="TÀI"?"var(--tai)":"var(--xiu)";
+  barTai.style.width = conf+"%";
+  barXiu.style.width = (100-conf)+"%";
+  lbTai.innerText = "TÀI: "+conf+"%";
+  lbXiu.innerText = "XỈU: "+(100-conf)+"%";
+  confScore.innerText = conf+"%";
+  safeMode.innerText = conf>=70? "THEO":"KHÔNG THEO";
+  safeMode.style.color = conf>=70? "#00ff99":"#ff4d4d";
+  riskWarn.innerText = loseStreak>=2? "⚠️ AI đang thua liên tiếp – cân nhắc giảm cược":"";
+
+  setPulse(final, safeMode.innerText);
+  addLog(`> AI PRO: ${final} (${conf}%)`);
+  save();
+}
+
+function feedResult(real){
+  if(!lastPredict) return alert("Chưa có dự đoán!");
+  stats.total++;
+  if(real===lastPredict){ stats.win++; loseStreak=0; }
+  else { stats.lose++; loseStreak++; }
+
+  const data = history.map(x=> x==="TÀI"?1:0);
+  const pChain = phuongPhapChuoi(data);
+  const pTrend = phuongPhapXuHuong(data);
+  const pFreq  = phuongPhapTanSuat(data);
+  const pMark  = phuongPhapMarkov(data);
+  const vip = md5VipAnalysis(lastMd5);
+  const pMd5 = vip.final;
+
+  [["chain",pChain],["trend",pTrend],["freq",pFreq],["markov",pMark],["md5",pMd5]].forEach(([k,v])=>{
+    if(v===real) weights[k]+=0.1; else weights[k]=Math.max(0.5, weights[k]-0.1);
+  });
+
+  history.push(real); if(history.length>60) history.shift();
+  addLog(`> Kết quả thực: ${real} → ${real===lastPredict?"WIN":"LOSE"}`);
+  renderHist(); renderStats(); save();
+}
+
+function checkMD5(){
+  const provided = md5Provided.value.trim().toLowerCase();
+  const resultStr = resultString.value;
+  if(!provided || !resultStr) return alert("Nhập đủ MD5 và chuỗi kết quả!");
+
+  const calc = CryptoJS.MD5(resultStr).toString();
+  md5Calc.innerText = calc;
+
+  const ok = calc === provided;
+  md5Status.innerHTML = ok
+    ? `<span class="ok">✅ KẾT QUẢ KHỚP – Minh bạch</span>`
+    : `<span class="bad">❌ SAI LỆCH – Có thể nhập sai chuỗi hoặc dữ liệu không khớp</span>`;
+
+  md5Log.innerHTML += `> MD5 nhà cái: ${provided}<br>> MD5 tính được: ${calc}<br>> Trạng thái: ${ok?"KHỚP":"SAI"}<br><br>`;
+  md5Log.scrollTop = md5Log.scrollHeight;
+
+  // clear inputs
+  md5Provided.value = "";
+  resultString.value = "";
+}
+
+function clearAll(){
+  if(!confirm("Reset toàn bộ dữ liệu AI?")) return;
+  history=[]; stats={total:0,win:0,lose:0}; weights={markov:1,trend:1,freq:1,chain:1,md5:1};
+  loseStreak=0; lastPredict=null; lastMd5=null; localStorage.clear();
+  renderHist(); renderStats(); addLog("> Reset xong.");
+}
+
+renderHist(); renderStats();
 </script>
 </body>
 </html>
